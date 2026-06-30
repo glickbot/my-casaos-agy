@@ -6,11 +6,28 @@ const pty = require('node-pty');
 const simpleGit = require('simple-git');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+
+const OIDC_ENABLED = process.env.OIDC_ENABLED === 'true';
+const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-change-me';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+if (OIDC_ENABLED) {
+  app.use('/api', (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: "Unauthorized: Missing Token" });
+    try {
+      req.user = jwt.verify(token, JWT_SECRET);
+      next();
+    } catch (err) {
+      return res.status(403).json({ error: "Forbidden: Invalid Token" });
+    }
+  });
+}
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
@@ -106,6 +123,19 @@ app.post('/api/settings', (req, res) => {
 
 // PTY Sessions Tracker
 const sessions = {};
+
+if (OIDC_ENABLED) {
+  io.use((socket, next) => {
+    const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization?.split(' ')[1];
+    if (!token) return next(new Error("Unauthorized: Missing Token"));
+    try {
+      socket.user = jwt.verify(token, JWT_SECRET);
+      next();
+    } catch (err) {
+      next(new Error("Forbidden: Invalid Token"));
+    }
+  });
+}
 
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);

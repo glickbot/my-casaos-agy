@@ -11,8 +11,17 @@ services:
       - /DATA/AppData/casaos-agy/workspaces:/app/workspaces
       - /DATA/AppData/casaos-agy/gemini:/root/.gemini
     restart: unless-stopped
+    environment:
+      - OIDC_ENABLED=false
+      - JWT_SECRET=default-secret-change-me
     x-casaos:
-      envs: []
+      envs:
+        - container: OIDC_ENABLED
+          description:
+            en_us: Set to true to enforce JWT authentication from a reverse proxy.
+        - container: JWT_SECRET
+          description:
+            en_us: Secret key used to verify the JWT signatures.
       volumes:
         - container: /var/run/docker.sock
           description:
