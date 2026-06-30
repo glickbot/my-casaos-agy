@@ -26,10 +26,10 @@ services:
             en_us: Secret key used to verify the JWT signatures.
         - container: AGY_DANGEROUSLY_SKIP_PERMISSIONS
           description:
-            en_us: Set to true to skip permission prompts during autonomous operations. (Warning: high risk)
+            en_us: "Set to true to skip permission prompts during autonomous operations. (Warning: high risk)"
         - container: AGY_ARGS
           description:
-            en_us: Any additional command line arguments to pass to the AGY binary (e.g. --verbose)
+            en_us: "Any additional command line arguments to pass to the AGY binary (e.g. --verbose)"
       volumes:
         - container: /var/run/docker.sock
           description:
