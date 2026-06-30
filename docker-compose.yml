@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   casaos-agy-web:
-    build: .
+    image: ghcr.io/glickbot/my-casaos-agy:latest
     container_name: casaos-agy-web
     ports:
       - "3000:3000"

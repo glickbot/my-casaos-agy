@@ -22,9 +22,10 @@ up:
 down:
     docker compose down
 
-# Rebuild and start the application
+# Rebuild and start the application locally
 build-docker:
-    docker compose up -d --build
+    docker build -t ghcr.io/glickbot/my-casaos-agy:latest .
+    docker compose up -d
     @echo "======================================================"
     @echo "🚀 Application built and is running!"
     @echo "👉 Test the app at: http://localhost:3000"
