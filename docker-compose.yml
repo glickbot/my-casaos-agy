@@ -50,7 +50,7 @@ services:
         en_us: CasaOS application that wraps Antigravity-CLI into a web interface with workspace isolation and custom MCP server.
       tagline:
         en_us: AI Coding Assistant for CasaOS
-      icon: https://raw.githubusercontent.com/IceWhaleTech/CasaOS/main/public/favicon.ico
+      icon: https://antigravity.google/assets/image/brand/antigravity-icon__full-color.png
       thumbnail: ""
       title:
         en_us: CasaOS-AGY-Web

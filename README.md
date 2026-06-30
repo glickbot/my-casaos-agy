@@ -4,7 +4,7 @@
 
 Turn your CasaOS server into a highly capable, autonomous AI coding assistant!
 
-![App Icon](https://raw.githubusercontent.com/IceWhaleTech/CasaOS/main/public/favicon.ico)
+![App Icon](https://antigravity.google/assets/image/brand/antigravity-icon__full-color.png)
 
 ## Features
 - **Web-based Terminal**: Powered by `xterm.js` and `node-pty`, providing a flawless pseudo-terminal in the browser.
