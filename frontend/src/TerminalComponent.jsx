@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 import 'xterm/css/xterm.css';
 import { Copy } from 'lucide-react';
 
-const TerminalComponent = ({ workspaceName }) => {
+const TerminalComponent = ({ workspaceName, sessionType = 'agy' }) => {
   const terminalRef = useRef(null);
   const term = useRef(null);
   const socket = useRef(null);
@@ -52,7 +52,7 @@ const TerminalComponent = ({ workspaceName }) => {
     socket.current = io(socketUrl);
 
     socket.current.on('connect', () => {
-      socket.current.emit('start_session', { workspaceName });
+      socket.current.emit('start_session', { workspaceName, sessionType });
       fitAddon.current.fit();
       socket.current.emit('resize', { cols: term.current.cols, rows: term.current.rows });
     });

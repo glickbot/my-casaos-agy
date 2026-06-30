@@ -11,6 +11,8 @@ function App() {
   const [cloneUrl, setCloneUrl] = useState('');
   const [isCloning, setIsCloning] = useState(false);
   const [settings, setSettings] = useState({});
+  const [showAgy, setShowAgy] = useState(true);
+  const [showTmux, setShowTmux] = useState(false);
 
   useEffect(() => {
     fetchWorkspaces();
@@ -157,7 +159,7 @@ function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-casa-darker via-casa-darker to-black">
-        <header className="h-16 border-b border-white/5 flex items-center px-6 glass-panel rounded-none border-t-0 border-l-0 border-r-0">
+        <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 glass-panel rounded-none border-t-0 border-l-0 border-r-0">
           <div className="flex items-center gap-3 text-white">
             {activeWorkspace === 'Global' ? <TerminalSquare className="text-casa-accent" /> : <FolderGit2 className="text-purple-400" />}
             <h2 className="font-semibold text-lg">{activeWorkspace}</h2>
@@ -165,11 +167,38 @@ function App() {
               <span className="px-2 py-0.5 rounded text-xs bg-white/10 text-casa-light/70 border border-white/5">Isolated Context</span>
             )}
           </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowAgy(!showAgy)}
+              className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${showAgy ? 'bg-casa-accent/20 border-casa-accent/50 text-casa-accent' : 'border-white/10 text-casa-light/50 hover:bg-white/5'}`}
+            >
+              AGY
+            </button>
+            <button
+              onClick={() => setShowTmux(!showTmux)}
+              className={`px-3 py-1.5 text-xs rounded-lg border transition-colors ${showTmux ? 'bg-purple-500/20 border-purple-500/50 text-purple-400' : 'border-white/10 text-casa-light/50 hover:bg-white/5'}`}
+            >
+              Tmux
+            </button>
+          </div>
         </header>
         
-        <div className="flex-1 p-6 relative">
-          {/* Key allows remounting TerminalComponent when workspace changes, getting a fresh PTY */}
-          <TerminalComponent key={activeWorkspace} workspaceName={activeWorkspace} />
+        <div className="flex-1 p-6 relative flex flex-col lg:flex-row gap-4 overflow-hidden">
+          {showAgy && (
+            <div className="flex-1 min-h-0 min-w-0 flex flex-col">
+              <TerminalComponent key={`agy-${activeWorkspace}`} workspaceName={activeWorkspace} sessionType="agy" />
+            </div>
+          )}
+          {showTmux && (
+            <div className="flex-1 min-h-0 min-w-0 flex flex-col">
+              <TerminalComponent key={`tmux-${activeWorkspace}`} workspaceName={activeWorkspace} sessionType="tmux" />
+            </div>
+          )}
+          {!showAgy && !showTmux && (
+            <div className="flex-1 flex items-center justify-center text-casa-light/30">
+              <p>No terminals active. Select a terminal to view.</p>
+            </div>
+          )}
         </div>
       </main>
 

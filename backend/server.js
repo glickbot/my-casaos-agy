@@ -140,7 +140,7 @@ if (OIDC_ENABLED) {
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
   
-  socket.on('start_session', ({ workspaceName }) => {
+  socket.on('start_session', ({ workspaceName, sessionType = 'agy' }) => {
     let cwd = '/app';
     if (workspaceName && workspaceName !== 'Global') {
       cwd = path.join(WORKSPACES_DIR, workspaceName);
@@ -150,7 +150,23 @@ io.on('connection', (socket) => {
       }
     }
 
-    const ptyProcess = pty.spawn('/root/.local/bin/agy', [], {
+    const args = [];
+    let command = '/root/.local/bin/agy';
+
+    if (sessionType === 'tmux') {
+      command = 'tmux';
+      const sessionName = (workspaceName || 'global').replace(/[^a-zA-Z0-9]/g, '_');
+      args.push('new-session', '-A', '-s', sessionName);
+    } else {
+      if (process.env.AGY_DANGEROUSLY_SKIP_PERMISSIONS === 'true') {
+        args.push('--dangerously-skip-permissions');
+      }
+      if (process.env.AGY_ARGS) {
+        args.push(...process.env.AGY_ARGS.split(' '));
+      }
+    }
+
+    const ptyProcess = pty.spawn(command, args, {
       name: 'xterm-color',
       cols: 80,
       rows: 24,
@@ -169,7 +185,7 @@ io.on('connection', (socket) => {
     });
 
     // Auto-Execution Check
-    if (workspaceName && workspaceName !== 'Global') {
+    if (workspaceName && workspaceName !== 'Global' && sessionType === 'agy') {
       const instructionsFile = path.join(cwd, 'instructions.md');
       if (fs.existsSync(instructionsFile)) {
         setTimeout(() => {

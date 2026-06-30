@@ -14,6 +14,8 @@ services:
     environment:
       - OIDC_ENABLED=false
       - JWT_SECRET=default-secret-change-me
+      - AGY_DANGEROUSLY_SKIP_PERMISSIONS=false
+      - AGY_ARGS=
     x-casaos:
       envs:
         - container: OIDC_ENABLED
@@ -22,6 +24,12 @@ services:
         - container: JWT_SECRET
           description:
             en_us: Secret key used to verify the JWT signatures.
+        - container: AGY_DANGEROUSLY_SKIP_PERMISSIONS
+          description:
+            en_us: Set to true to skip permission prompts during autonomous operations. (Warning: high risk)
+        - container: AGY_ARGS
+          description:
+            en_us: Any additional command line arguments to pass to the AGY binary (e.g. --verbose)
       volumes:
         - container: /var/run/docker.sock
           description:
@@ -56,3 +64,4 @@ services:
         en_us: CasaOS-AGY-Web
       category: AI
       port_map: "3000"
+      index: /
