@@ -184,16 +184,12 @@ function App() {
         </header>
         
         <div className="flex-1 p-6 relative flex flex-col lg:flex-row gap-4 overflow-hidden">
-          {showAgy && (
-            <div className="flex-1 min-h-0 min-w-0 flex flex-col">
-              <TerminalComponent key={`agy-${activeWorkspace}`} workspaceName={activeWorkspace} sessionType="agy" />
-            </div>
-          )}
-          {showTmux && (
-            <div className="flex-1 min-h-0 min-w-0 flex flex-col">
-              <TerminalComponent key={`tmux-${activeWorkspace}`} workspaceName={activeWorkspace} sessionType="tmux" />
-            </div>
-          )}
+          <div className={`flex-1 min-h-0 min-w-0 flex-col ${showAgy ? 'flex' : 'hidden'}`}>
+            <TerminalComponent key={`agy-${activeWorkspace}`} workspaceName={activeWorkspace} sessionType="agy" />
+          </div>
+          <div className={`flex-1 min-h-0 min-w-0 flex-col ${showTmux ? 'flex' : 'hidden'}`}>
+            <TerminalComponent key={`tmux-${activeWorkspace}`} workspaceName={activeWorkspace} sessionType="tmux" />
+          </div>
           {!showAgy && !showTmux && (
             <div className="flex-1 flex items-center justify-center text-casa-light/30">
               <p>No terminals active. Select a terminal to view.</p>
