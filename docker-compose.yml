@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  casaos-agy-web:
+    build: .
+    container_name: casaos-agy-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /DATA/AppData/casaos-agy/workspaces:/app/workspaces
+      - /DATA/AppData/casaos-agy/gemini:/root/.gemini
+    restart: unless-stopped
+    x-casaos:
+      envs: []
+      volumes:
+        - container: /var/run/docker.sock
+          description:
+            en_us: Docker socket for host management
+          host: /var/run/docker.sock
+        - container: /app/workspaces
+          description:
+            en_us: Persistent storage for subrepos
+          host: /DATA/AppData/casaos-agy/workspaces
+        - container: /root/.gemini
+          description:
+            en_us: Persistent storage for agy settings and db
+          host: /DATA/AppData/casaos-agy/gemini
+      ports:
+        - container: "3000"
+          description:
+            en_us: Web UI port
+          host: "3000"
+          protocol: tcp
+          published: "3000"
+      architectures:
+        - amd64
+        - arm64
+      main_app: casaos-agy-web
+      description:
+        en_us: CasaOS application that wraps Antigravity-CLI into a web interface with workspace isolation and custom MCP server.
+      tagline:
+        en_us: AI Coding Assistant for CasaOS
+      icon: https://raw.githubusercontent.com/IceWhaleTech/CasaOS/main/public/favicon.ico
+      thumbnail: ""
+      title:
+        en_us: CasaOS-AGY-Web
+      category: AI
+      port_map: "3000"
