@@ -159,7 +159,7 @@ io.on('connection', (socket) => {
       try {
         isNewSession = require('child_process').spawnSync('tmux', ['has-session', '-t', sessionName]).status !== 0;
       } catch (e) {}
-      args.push('new-session', '-A', '-s', sessionName);
+      args.push('new-session', '-A', '-D', '-s', sessionName);
     } else {
       const sessionName = `agy_${(workspaceName || 'global').replace(/[^a-zA-Z0-9]/g, '_')}`;
       try {
@@ -173,7 +173,7 @@ io.on('connection', (socket) => {
       if (process.env.AGY_ARGS) {
         agyArgs.push(...process.env.AGY_ARGS.split(' '));
       }
-      args.push('new-session', '-A', '-s', sessionName, ...agyArgs);
+      args.push('new-session', '-A', '-D', '-s', sessionName, ...agyArgs);
     }
 
     const ptyProcess = pty.spawn(command, args, {

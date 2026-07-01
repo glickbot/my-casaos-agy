@@ -67,14 +67,27 @@ const TerminalComponent = ({ workspaceName, sessionType = 'agy' }) => {
 
     const handleResize = () => {
       if (fitAddon.current && term.current && socket.current) {
-        fitAddon.current.fit();
-        socket.current.emit('resize', { cols: term.current.cols, rows: term.current.rows });
+        try {
+          fitAddon.current.fit();
+          socket.current.emit('resize', { cols: term.current.cols, rows: term.current.rows });
+        } catch (e) {
+          // ignore resize errors during unmount
+        }
       }
     };
-    window.addEventListener('resize', handleResize);
+
+    const resizeObserver = new ResizeObserver(() => {
+      window.requestAnimationFrame(() => {
+        handleResize();
+      });
+    });
+
+    if (terminalRef.current) {
+      resizeObserver.observe(terminalRef.current);
+    }
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       socket.current.disconnect();
       term.current.dispose();
     };
