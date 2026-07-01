@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TerminalComponent from './TerminalComponent';
-import { Plus, Settings, FolderGit2, X, TerminalSquare } from 'lucide-react';
+import { Plus, Settings, FolderGit2, X, TerminalSquare, Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
 
@@ -13,6 +13,7 @@ function App() {
   const [settings, setSettings] = useState({});
   const [showAgy, setShowAgy] = useState(true);
   const [showTmux, setShowTmux] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
     fetchWorkspaces();
@@ -82,8 +83,9 @@ function App() {
   return (
     <div className="flex h-screen w-full bg-casa-darker font-sans text-casa-light overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-72 bg-casa-dark flex flex-col border-r border-white/5">
-        <div className="p-6 border-b border-white/5 flex items-center gap-3">
+      {showSidebar && (
+        <aside className="w-72 flex-shrink-0 bg-casa-dark flex flex-col border-r border-white/5 transition-all duration-300">
+          <div className="p-6 border-b border-white/5 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-casa-accent to-purple-500 flex items-center justify-center shadow-lg shadow-casa-accent/20">
             <TerminalSquare size={20} className="text-white" />
           </div>
@@ -156,11 +158,18 @@ function App() {
           </button>
         </div>
       </aside>
+      )}
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-casa-darker via-casa-darker to-black">
         <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 glass-panel rounded-none border-t-0 border-l-0 border-r-0">
           <div className="flex items-center gap-3 text-white">
+            <button 
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="p-1.5 -ml-2 mr-1 rounded-lg hover:bg-white/10 text-casa-light/70 hover:text-white transition-colors"
+            >
+              {showSidebar ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
+            </button>
             {activeWorkspace === 'Global' ? <TerminalSquare className="text-casa-accent" /> : <FolderGit2 className="text-purple-400" />}
             <h2 className="font-semibold text-lg">{activeWorkspace}</h2>
             {activeWorkspace !== 'Global' && (

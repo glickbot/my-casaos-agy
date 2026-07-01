@@ -151,19 +151,29 @@ io.on('connection', (socket) => {
     }
 
     const args = [];
-    let command = '/root/.local/bin/agy';
+    let command = 'tmux';
+    let isNewSession = true;
 
     if (sessionType === 'tmux') {
-      command = 'tmux';
-      const sessionName = (workspaceName || 'global').replace(/[^a-zA-Z0-9]/g, '_');
+      const sessionName = `user_${(workspaceName || 'global').replace(/[^a-zA-Z0-9]/g, '_')}`;
+      try {
+        isNewSession = require('child_process').spawnSync('tmux', ['has-session', '-t', sessionName]).status !== 0;
+      } catch (e) {}
       args.push('new-session', '-A', '-s', sessionName);
     } else {
+      const sessionName = `agy_${(workspaceName || 'global').replace(/[^a-zA-Z0-9]/g, '_')}`;
+      try {
+        isNewSession = require('child_process').spawnSync('tmux', ['has-session', '-t', sessionName]).status !== 0;
+      } catch (e) {}
+      
+      const agyArgs = ['/root/.local/bin/agy'];
       if (process.env.AGY_DANGEROUSLY_SKIP_PERMISSIONS === 'true') {
-        args.push('--dangerously-skip-permissions');
+        agyArgs.push('--dangerously-skip-permissions');
       }
       if (process.env.AGY_ARGS) {
-        args.push(...process.env.AGY_ARGS.split(' '));
+        agyArgs.push(...process.env.AGY_ARGS.split(' '));
       }
+      args.push('new-session', '-A', '-s', sessionName, ...agyArgs);
     }
 
     const ptyProcess = pty.spawn(command, args, {
@@ -185,7 +195,7 @@ io.on('connection', (socket) => {
     });
 
     // Auto-Execution Check
-    if (workspaceName && workspaceName !== 'Global' && sessionType === 'agy') {
+    if (workspaceName && workspaceName !== 'Global' && sessionType === 'agy' && isNewSession) {
       const instructionsFile = path.join(cwd, 'instructions.md');
       if (fs.existsSync(instructionsFile)) {
         setTimeout(() => {
